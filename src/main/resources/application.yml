@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: RestMicroService
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        ddl-auto: validate
+        default_schema:
+          demodb
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/db_local
+    password: password
+    username: user
+    platform: postgres
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    url: jdbc:postgresql://127.0.0.1:5432/db_local
+    schemas: demodb
+    password: password
+    user: user
+    table: FLYWAY_SCHEMA_HISTORY
+    locations: classpath:/db/migration
