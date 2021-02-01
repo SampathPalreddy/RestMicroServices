@@ -13,6 +13,7 @@ import java.util.*;
 
 import static org.springframework.http.HttpStatus.OK;
 
+
 @RestController
 @RequestMapping("/customer")
 public class Controller {
@@ -26,14 +27,14 @@ public class Controller {
 
     @GetMapping
     public ResponseEntity<?> getAllCustomer(){
-        List<Customer> customerList = controllerImpl.getCustomers();
+        List<Customer> customerList = controllerImpl.getAllCustomers();
         return new ResponseEntity<>(customerList, OK);
     }
 
     @GetMapping("{customerId}/customer")
     public ResponseEntity<?> getCustomer(@PathVariable("customerId") int customerId){
         Map<Integer,Integer> set = new HashMap<>();
-        Optional<Customer> customer = controllerImpl.getCustomer(customerId);
+        Optional<Customer> customer = controllerImpl.getCustomerWithID(customerId);
 
         if(customer.isPresent()){
             return new ResponseEntity<>(customer, OK);
