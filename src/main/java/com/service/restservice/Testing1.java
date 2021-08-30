@@ -68,8 +68,14 @@ public class Testing1 {
                 .forEach(it -> {
             String[] values = it.split(",");
                 String date = dateConverter(values[0]);
+                if(date == null){
+                    return;
+                }
                 String description = (formatDescription(values[1]));
                 String amount = formatMoney(values[2]);
+                if(amount == null){
+                    return;
+                }
                 if(!response.contains(date+description)){
                    response.add(date+description);
                    Model model = new Model(date, description, amount);
@@ -83,16 +89,20 @@ public class Testing1 {
     }
 
     public static String dateConverter(String date){
-        ZoneId utc = ZoneId.of("UTC");
-        ZoneId etZoneId = ZoneId.of("America/New_York");
-        DateTimeFormatter etFormat = DateTimeFormatter.ofPattern("M/dd/yy h:mm a 'EDT'");
+        try {
+            ZoneId utc = ZoneId.of("UTC");
+            ZoneId etZoneId = ZoneId.of("America/New_York");
+            DateTimeFormatter etFormat = DateTimeFormatter.ofPattern("M/dd/yy h:mm a 'EDT'");
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy'T'HH:mm:ss'Z'");
-        LocalDateTime currentDateTime = LocalDateTime.parse(date, formatter);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy'T'HH:mm:ss'Z'");
+            LocalDateTime currentDateTime = LocalDateTime.parse(date, formatter);
 
-        ZonedDateTime currentISTime = currentDateTime.atZone(utc);
-        ZonedDateTime currentETime = currentISTime.withZoneSameInstant(etZoneId);
-        return etFormat.format(currentETime);
+            ZonedDateTime currentISTime = currentDateTime.atZone(utc);
+            ZonedDateTime currentETime = currentISTime.withZoneSameInstant(etZoneId);
+            return etFormat.format(currentETime);
+        } catch (Exception e){
+            return null;
+        }
     }
 
     private static String formatDescription(String value) {
@@ -100,10 +110,14 @@ public class Testing1 {
     }
 
     public static String formatMoney(String value) {
-        NumberFormat myFormat = NumberFormat.getInstance();
-        BigDecimal response = BigDecimal.valueOf(Double.valueOf(value))
-                .setScale(2, RoundingMode.CEILING);
-        String formatted = myFormat.format(response);
-        return "$"+ formatted;
+        try {
+            NumberFormat myFormat = NumberFormat.getInstance();
+            BigDecimal response = BigDecimal.valueOf(Double.valueOf(value))
+                    .setScale(2, RoundingMode.CEILING);
+            String formatted = myFormat.format(response);
+            return "$"+ formatted;
+        } catch (Exception e){
+            return null;
+        }
     }
 }
