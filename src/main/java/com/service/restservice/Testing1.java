@@ -2,6 +2,8 @@ package com.biglots.tms.outbound.service;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -75,14 +77,15 @@ public class Testing1 {
                 }
         });
         return models.stream()
-                .sorted(Comparator.comparing(Model::getDate).reversed())
+                .sorted(Comparator.comparing(Model::getDate).reversed()
+                        .thenComparing(Model::getDescription))
                 .map(Model::toString).collect(Collectors.toList());
     }
 
     public static String dateConverter(String date){
         ZoneId utc = ZoneId.of("UTC");
         ZoneId etZoneId = ZoneId.of("America/New_York");
-        DateTimeFormatter etFormat = DateTimeFormatter.ofPattern("MM/dd/yy hh:mm a 'EDT'");
+        DateTimeFormatter etFormat = DateTimeFormatter.ofPattern("M/dd/yy h:mm a 'EDT'");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy'T'HH:mm:ss'Z'");
         LocalDateTime currentDateTime = LocalDateTime.parse(date, formatter);
@@ -97,6 +100,10 @@ public class Testing1 {
     }
 
     public static String formatMoney(String value) {
-        return "$"+BigDecimal.valueOf(Double.valueOf(value)).toString();
+        NumberFormat myFormat = NumberFormat.getInstance();
+        BigDecimal response = BigDecimal.valueOf(Double.valueOf(value))
+                .setScale(2, RoundingMode.CEILING);
+        String formatted = myFormat.format(response);
+        return "$"+ formatted;
     }
 }
