@@ -1,5 +1,7 @@
-
+package com.biglots.tms.outbound.service;
 import org.apache.commons.collections4.CollectionUtils;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -29,6 +31,29 @@ public class Testing1 {
             return builder.toString();
         }
 
+        public String getDate() {
+            return date;
+        }
+
+        public void setDate(String date) {
+            this.date = date;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getAmount() {
+            return amount;
+        }
+
+        public void setAmount(String amount) {
+            this.amount = amount;
+        }
     }
 
     public static List<String> transform(List<String> input){
@@ -41,16 +66,17 @@ public class Testing1 {
                 .forEach(it -> {
             String[] values = it.split(",");
                 String date = dateConverter(values[0]);
-                String description = (formatDescription(values[2]));
-                String amount = formatMoney(values[1]);
+                String description = (formatDescription(values[1]));
+                String amount = formatMoney(values[2]);
                 if(!response.contains(date+description)){
                    response.add(date+description);
                    Model model = new Model(date, description, amount);
                    models.add(model);
-
                 }
         });
-        return models.stream().map(Model::toString).collect(Collectors.toList());
+        return models.stream()
+                .sorted(Comparator.comparing(Model::getDate).reversed())
+                .map(Model::toString).collect(Collectors.toList());
     }
 
     public static String dateConverter(String date){
@@ -71,6 +97,6 @@ public class Testing1 {
     }
 
     public static String formatMoney(String value) {
-        return "$"+String.format("%,d", Long.valueOf(value));
+        return "$"+BigDecimal.valueOf(Double.valueOf(value)).toString();
     }
 }
